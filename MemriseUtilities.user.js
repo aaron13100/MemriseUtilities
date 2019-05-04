@@ -9,6 +9,7 @@
 // @updateURL     https://github.com/scytalezero/MemriseUtilities/raw/master/MemriseUtilities.user.js
 // @downloadURL   https://github.com/scytalezero/MemriseUtilities/raw/master/MemriseUtilities.user.js
 // @match         https://*.memrise.com/course/*
+// @match         https://*.memrise.com/course/*
 // @match         http://akademio-de-esperanto.org/akademia_vortaro/*
 // @copyright     2012+, ScytaleZero
 // ==/UserScript==
@@ -93,13 +94,18 @@ function SpiderDone() {
   for (var Level in Wordlist) {
     for (LCV=0; LCV<Wordlist[Level].length; LCV++) {
       WordlistText += Wordlist[Level][LCV].Word + "\t" + Wordlist[Level][LCV].Translation + "\t" + 
-        CourseTag + "," + Level + "\n";
+          Level + "\n";
       BareWordlistText = BareWordlistText += Wordlist[Level][LCV].Word + "\t" + Wordlist[Level][LCV].Translation + "\n";
     }
   }
   $("#Wordlist").val(WordlistText.trimRight());
   $("#BareWordlist").val(BareWordlistText.trimRight());
 }
+
+function htmlEncode( html ) {
+    return document.createElement( 'a' ).appendChild(
+        document.createTextNode( html ) ).parentNode.innerHTML;
+};
 
 //Pull words and definitions from a level page.
 function ExtractTerms(Data) {
