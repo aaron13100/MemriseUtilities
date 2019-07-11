@@ -70,11 +70,15 @@ function SpiderLevels() {
 
 //All levels have been parsed and the wordlist is done.
 function SpiderDone() {
-    var WordlistText = "", BareWordlistText = "", LCV;
+    var WordlistText = "";
+    var BareWordlistText = "";
+
+    WordlistText += "Word" + "\t" + "Translation" + "\t" + "Level Name" + "\t" + "Status" + "\n\n";
+    BareWordlistText = BareWordlistText += "Word" + "\t" + "Translation" + "\n\n";
 
     Out("Wordlist parsed.");
     //Add the wordlist text area.
-    $("#WordListContainer").empty().append("<div><h2>Course Wordlist as TSV</h2><textarea id='Wordlist' style='width:800px; height:400px;'></textarea><p>&nbsp;</p><h2>Bare Wordlist as TSV</h2><textarea id='BareWordlist' style='width:800px; height:400px;'></textarea></div>");
+    $("#WordListContainer").empty().append("<div><h2>Course Wordlist, tab separated values</h2><textarea id='Wordlist' style='width:800px; height:400px;'></textarea><p>&nbsp;</p><h2>Bare Wordlist, tab separated values</h2><textarea id='BareWordlist' style='width:800px; height:400px;'></textarea></div>");
     for (var level = 1; level <= Object.keys(Wordlist).length; level++) {
         var levelDataPacket = Wordlist[level];
         for (var wordPacketIndex = 0; wordPacketIndex < levelDataPacket['words'].length; wordPacketIndex++) {
