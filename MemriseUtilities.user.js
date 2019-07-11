@@ -44,8 +44,6 @@ function Main() {
 //Iterate through the levels and kick off the retrieves.
 function SpiderLevels() {
     //Add our UI
-    debugger;
-
     $('#WordListContainer').remove();
     $("div.container-main").prepend("<div id='WordListContainer'><h2>Working</h2></div>");
     var urls = [];
@@ -77,11 +75,13 @@ function SpiderDone() {
     Out("Wordlist parsed.");
     //Add the wordlist text area.
     $("#WordListContainer").empty().append("<div><h2>Course Wordlist as TSV</h2><textarea id='Wordlist' style='width:800px; height:400px;'></textarea><p>&nbsp;</p><h2>Bare Wordlist as TSV</h2><textarea id='BareWordlist' style='width:800px; height:400px;'></textarea></div>");
-    for (var Level in Wordlist) {
-        for (LCV=0; LCV<Wordlist[Level].length; LCV++) {
-            WordlistText += Wordlist[Level][LCV].Word + "\t" + Wordlist[Level][LCV].Translation + "\t" +
-                Level + "\n";
-            BareWordlistText = BareWordlistText += Wordlist[Level][LCV].Word + "\t" + Wordlist[Level][LCV].Translation + "\n";
+    for (var level = 1; level <= Object.keys(Wordlist).length; level++) {
+        var levelDataPacket = Wordlist[level];
+        for (var wordPacketIndex = 0; wordPacketIndex < levelDataPacket['words'].length; wordPacketIndex++) {
+            var wordPacket = levelDataPacket['words'][wordPacketIndex];
+            WordlistText += wordPacket.Word + "\t" + wordPacket.Translation + "\t" +
+                levelDataPacket["levelName"] + "\t" + wordPacket.Status + "\n";
+            BareWordlistText = BareWordlistText += wordPacket.Word + "\t" + wordPacket.Translation + "\n";
         }
     }
     $("#Wordlist").val(WordlistText.trimRight());
@@ -98,7 +98,11 @@ function ExtractTerms(data, levelOrder) {
     var LevelName = $(data).find('.progress-box-title').text().trim();
     var WordFilter = $('#WordFilter option:selected').val();
     Out("Level: " + LevelName);
-    Wordlist[LevelName] = [];
+    var levelDataPacket = {};
+    var wordsInThisLevel = [];
+    levelDataPacket["words"] = wordsInThisLevel;
+    levelDataPacket["order"] = levelOrder;
+    levelDataPacket["levelName"] = LevelName;
     $(data).find("div.text-text").each(function() {
         var ignored;
         if ($(this).find("div.status").length && $(this).find("div.status").text() === "Ignored") {
@@ -112,12 +116,14 @@ function ExtractTerms(data, levelOrder) {
             (WordFilter === "seeds-only" && $(this).find("i.ico-seed").length) ||
             (WordFilter === "learned-only" && $(this).find("i.ico-water").length) ||
             WordFilter === "all") {
-            Wordlist[LevelName].push({
+            wordsInThisLevel.push({
                 "Word": $(this).find("div.col_a").text(),
-                "Translation": $(this).find("div.col_b").text()
+                "Translation": $(this).find("div.col_b").text(),
+                "Status": $(this).find("div.status").text()
             });
         }
     });
+    Wordlist[levelOrder] = levelDataPacket;
     $("#WordListContainer h2").append(".");
 }
 
